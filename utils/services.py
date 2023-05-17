@@ -33,6 +33,17 @@ def date_format(data_str: str, formatted_date: str = '%d.%m.%Y %H:%M:%S'):
     return formatted_date
 
 
+def print_last_five_successful_operations():
+    """
+    print the last five successful operations
+    :return:
+    """
+    successful_operations = [op for op in ['operation'] if
+                             op['state'] == 'EXECUTED']
+    last_five_successful_operations = successful_operations[-5:]
+    return last_five_successful_operations
+
+
 def sort_by_date(json_dict=None):
     """
     sort the list in the order we want
@@ -43,9 +54,7 @@ def sort_by_date(json_dict=None):
     return sort_list
 
 
-def print_last_five_successful_operations():
-    successful_operations = [op for op in json_dict['operations'] if
-                             op['state'] == 'EXECUTED']
-    last_five_successful_operations = successful_operations[-5:]
-    for op in last_five_successful_operations:
-        print(op)
+
+
+
+
