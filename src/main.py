@@ -1,12 +1,11 @@
-from utils.services import load_json
-from utils.services import sort_by_date
-from utils.services import
+from utils.services import load_json, get_last_five_successful_operations, sort_by_date, sorted_data,
 
-def main():
-    data = load_json(filename)
-    sorted_data = sort_by_data(data)
 
+if __name__ == '__main__':
+    main()
+    json_dict = load_json(filename)
+    sorted_data = sort_by_data(json_dict)
     last_5 = get_last_five_successful_operations(sorted_data)
 
 
-#main()
+
