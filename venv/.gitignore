@@ -1,5 +1,4 @@
-# created by virtualenv automatically
-.idea
-# Byte-compiled / optimized / DLL files
-__pycache__/
 venv
+.idea
+.pytest_cache
+
