@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 import os.path
+from locale import currency
 
 # from data.operation.json
 # PATH_TO_DATA = os.path.abspath(os.path.join("..", "data"))
@@ -53,26 +54,7 @@ def sort_by_date(json_dict=None):
     return sort_list
 
 
-# def mask_card(operations):
-#     from_card = operations.get('from', '')
-#     from_card_masked = f'{from_card[:4]} {from_card[4:8]}**{from_card[-4:]}'
-#     return from_card_masked
-
-
-# def mask_account(operations):
-#     to_account = operations.get('to', '')
-#     to_account_masked = f'**{to_account[-4:]}'
-#     return to_account_masked
-
-
-# def print_info(operations):
-#     for op in operations:
-#         print(f"{date_format(op['date'])} {op['description']}\n"
-#               f"{mask_card} -> Счет {mask_account}\n"
-#               f"{operations["operationAmount"]["amount"]}\n"
-#               f"{operations["operationAmount"]["currency"]}")
-
-def mask_card(operation_credintials: str) -> str:
+def mask_card(operation_credentials: str) -> str:
     """
     Маскирует номер счета/карты
 
@@ -83,33 +65,40 @@ def mask_card(operation_credintials: str) -> str:
     """
 
     # Если по ключу получили значение
-    if operation_credintials:
+    if operation_credentials:
 
-    # Берем счет, пример: Visa Classic 6831982476737658
-    # Разбиваем строку по пробелам и берем все до последнего элемента - это название счета
-        credintials_name = " ".join(operation_credintials.split(" ")[:-1])  # Visa Classic
+        # Берем счет, пример: Visa Classic 6831982476737658
+        # Разбиваем строку по пробелам и берем все до последнего элемента - это название счета
+        credentials_name = " ".join(operation_credentials.split(" ")[:-1])  # Visa Classic
         # Последний элемент - всегда цифры
-        credintials_number = operation_credintials.split(" ")[-1]  # 6831982476737658
+        credentials_number = operation_credentials.split(" ")[-1]  # 6831982476737658
 
-    # Если номер состоит из 16 цифр - это номер карты. Маскируем как карту
-    if len(credintials_number) == 16:
-        # Берем первые 6 чисел и последние 4. Отсальное звездочки
-        number_hide = credintials_number[:6] + "*" * 6 + credintials_number[:-4]
-        # Разбиваем единое число на блоки по 4 цифры
-        number_sep = [number_hide[i:i + 4] for i in range(0, len(credintials_number), 4)]
-        #Возвращаем полный счет с именем и замаскированными цифрами
-        return f'{credintials_name} {" ".join(number_sep)}'
+        # Если номер состоит из 16 цифр - это номер карты. Маскируем как карту
+        if len(credentials_number) == 16:
+            # Берем первые 6 чисел и последние 4. Остальное звездочки
+            number_hide = credentials_number[:6] + "*" * 6 + credentials_number[-4:]
+            # Разбиваем единое число на блоки по 4 цифры
+            number_sep = [number_hide[i:i + 4] for i in range(0, len(credentials_number), 4)]
+            # Возвращаем полный счет с именем и замаскированными цифрами
+            return f'{credentials_name} {" ".join(number_sep)}'
         # Если номер состоит из 20 цифр - это номер счета
-        elif len(credintials_number) == 20:
-        # Просто берем последние 4 цифры, остальное заменяем на две звездочки
-        return f'{credintials_name} {credintials_number.replace(credintials_number[:-4], "**")}'
+        elif len(credentials_number) == 20:
+            # Просто берем последние 4 цифры, остальное заменяем на две звездочки
+            return f'{credentials_name} {credentials_number.replace(credentials_number[:-4], "**")}'
 
         # Если по ключу не было получено значение - то возвращаем просто строку N/A (неопределённы)
-        return "N/A"
+    return "N/A"
+
 
 def print_info(operations):
+    """
+    Display all information about the operation
+    :param operations: dict
+    :print: display all information about the operation
+    """
     for op in operations:
+        operation_amount: dict = op['operationAmount']
         print(f"{date_format(op['date'])} {op['description']}\n"
-              f"{mask_card(op.get('from'))} -> {mask_card(op.get('to'))}\n")
-
-
+              f"{mask_card(op.get('from'))} -> {mask_card(op.get('to'))}\n"
+              f"{operation_amount.get('amount')} {operation_amount['currency'].get('name')}")
+        print()

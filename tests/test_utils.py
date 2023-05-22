@@ -3,7 +3,7 @@ from json import JSONDecodeError
 import pytest
 import json
 
-from utils.services import load_json, date_format, sort_by_date, get_last_five_successful_operations
+from utils.services import load_json, date_format, sort_by_date, get_last_five_successful_operations, mask_card
 
 
 def test_load_json():
@@ -50,3 +50,9 @@ def test_get_last_five_successful_operations():
         {"state": "EXECUTED", "date": "2018-02-03T07:16:28.366141"}
     ]
 
+
+def test_mask_card():
+
+    assert mask_card("Maestro 1593832649785199") == "Maestro 1593 83** **** 5199"
+    assert mask_card("Visa Classic 6831982476737658") == "Visa Classic 6831 98** **** 7658"
+    assert mask_card("Current account 38976430693692818358") == "Current account **8358"
